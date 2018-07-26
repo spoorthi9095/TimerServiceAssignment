@@ -1,46 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".TimerActivity">
+    android:background="#dcdcdc"
+    tools:context=".activities.TimerActivity">
 
     <TextView
         android:id="@+id/status_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
+        android:padding="16sp"
+        android:textSize="30sp"
+        android:gravity="center"
+        android:textColor="@android:color/black"
+        android:layout_centerInParent="true"
         android:text="TImer will start here" />
 
-    <Button
-        android:id="@+id/start_btn"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="startTimerService"
-        android:text="Start" />
+        android:id="@+id/lin_buttons"
+        android:weightSum="4"
+        android:layout_margin="10dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/stop_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="stopTimerService"
-        android:text="Stop" />
+        <ImageView
+            android:id="@+id/iv_start_btn"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:onClick="startTimerService"
+            android:layout_weight="1"
+            android:layout_margin="10dp"
+            android:background="@drawable/circle_bg"
+            android:padding="10dp"
+            android:src="@drawable/ic_play_arrow_black_24dp"
+            android:tint="@android:color/holo_green_light"
+            android:text="Start"
+            android:layout_gravity="center"/>
 
-    <Button
-        android:id="@+id/pause_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="pauseTimerService"
-        android:text="Pause" />
+        <ImageView
+            android:id="@+id/iv_stop_btn"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:onClick="stopTimerService"
+            android:background="@drawable/circle_bg"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:src="@drawable/ic_stop_black_24dp"
+            android:tint="@android:color/holo_red_light"
+            android:text="Stop"
+            android:layout_gravity="center"/>
 
-    <Button
-        android:id="@+id/restart_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:onClick="resetTimerService"
-        android:text="Reset" />
+        <ImageView
+            android:id="@+id/iv_pause_btn"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:onClick="pauseTimerService"
+            android:background="@drawable/circle_bg"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:src="@drawable/ic_pause_black_24dp"
+            android:tint="@android:color/holo_blue_light"
+            android:text="Pause"
+            android:layout_gravity="center"/>
 
-</LinearLayout>
+        <ImageView
+            android:id="@+id/iv_restart_btn"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:onClick="resetTimerService"
+            android:background="@drawable/circle_bg"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:padding="10dp"
+            android:src="@drawable/ic_refresh_black_24dp"
+            android:tint="@android:color/holo_blue_light"
+            android:text="Reset"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -13,12 +13,13 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.example.spoorthi.timerassignment.R;
-import com.example.spoorthi.timerassignment.TimerActivity;
+import com.example.spoorthi.timerassignment.activities.TimerActivity;
 import com.example.spoorthi.timerassignment.storage.LocalSharedPreferences;
 
 import java.util.concurrent.TimeUnit;
 
 import static com.example.spoorthi.timerassignment.keyconstants.KeyList.IS_PAUSED;
+import static com.example.spoorthi.timerassignment.keyconstants.KeyList.IS_RESET;
 import static com.example.spoorthi.timerassignment.keyconstants.KeyList.PAUSE_TIME;
 import static com.example.spoorthi.timerassignment.keyconstants.KeyList.START_TIME;
 
@@ -47,12 +48,8 @@ public class CountdownTimerService extends Service
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         boolean isPaused = intent.getBooleanExtra(IS_PAUSED,false);
+        boolean isReset = intent.getBooleanExtra(IS_RESET,false);
         Log.e("isPaused ",""+isPaused);
-
-        Intent notificationIntent = new Intent(this, TimerActivity.class);
-        @SuppressLint("WrongConstant")
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-                notificationIntent, Intent.FLAG_ACTIVITY_NEW_TASK);
 
         if(isPaused)
         {
@@ -61,13 +58,16 @@ public class CountdownTimerService extends Service
             localSharedPreferences.savePauseData(PAUSE_TIME,pauseTime);
             localSharedPreferences.setTimerPaused(IS_PAUSED,true);
 
-            Notification notification = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setContentText(pauseVal)
-                    .setContentIntent(pendingIntent).build();
+            updateNotification(pauseVal);
 
-            startForeground(101, notification);
+        }
+        else if(isReset)
+        {
+            timer.cancel();
 
+            Intent timerInfoIntent = new Intent(TIME_INFO);
+            timerInfoIntent.putExtra("VALUE", "00:00:30");
+            LocalBroadcastManager.getInstance(CountdownTimerService.this).sendBroadcast(timerInfoIntent);
         }
         else {
             long startTime = intent.getLongExtra(START_TIME,30000);
@@ -77,12 +77,7 @@ public class CountdownTimerService extends Service
             timer = new CounterClass(30000, 1000);
             timer.start();
 
-            Notification notification = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setContentText("Counter down service")
-                    .setContentIntent(pendingIntent).build();
-
-            startForeground(101, notification);
+            updateNotification("Countdown started");
         }
 
         return START_NOT_STICKY;
@@ -116,6 +111,7 @@ public class CountdownTimerService extends Service
             System.out.println(hms);
             pauseVal = hms;
             pauseTime = millis;
+            updateNotification(hms);
             Intent timerInfoIntent = new Intent(TIME_INFO);
             timerInfoIntent.putExtra("VALUE", hms);
             LocalBroadcastManager.getInstance(CountdownTimerService.this).sendBroadcast(timerInfoIntent);
@@ -125,8 +121,27 @@ public class CountdownTimerService extends Service
         public void onFinish() {
             Intent timerInfoIntent = new Intent(TIME_INFO);
             timerInfoIntent.putExtra("VALUE", "Completed");
+
+            LocalSharedPreferences localSharedPreferences = LocalSharedPreferences.getInstance(getApplicationContext());
+            localSharedPreferences.setTimerPaused(IS_PAUSED,false);
+
             LocalBroadcastManager.getInstance(CountdownTimerService.this).sendBroadcast(timerInfoIntent);
             //stopSelf();
         }
+    }
+
+    private void updateNotification(String hms)
+    {
+        Intent notificationIntent = new Intent(this, TimerActivity.class);
+        @SuppressLint("WrongConstant")
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                notificationIntent, Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        Notification notification = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentText(hms)
+                .setContentIntent(pendingIntent).build();
+
+        startForeground(101, notification);
     }
 }
